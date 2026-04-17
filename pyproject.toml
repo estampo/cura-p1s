@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cura-p1s"
+version = "0.1.0"
+description = "CuraEngine Bambu Lab P1S printer definition and G-code template resolver"
+readme = "README.md"
+license = "AGPL-3.0-only"
+requires-python = ">=3.10"
+authors = [{ name = "Paul Fremantle" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Topic :: Printing",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+cura-p1s = "cura_p1s.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cura_p1s"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]

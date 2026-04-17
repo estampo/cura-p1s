@@ -1,50 +1,88 @@
 # cura-p1s
 
-CuraEngine printer definition for the Bambu Lab P1S.
+CuraEngine printer definition and G-code template resolver for the Bambu Lab P1S.
 
-## Files
+## Install
+
+```sh
+pipx install cura-p1s
+```
+
+## Commands
+
+### `cura-p1s resolve` — resolve G-code template variables
+
+CuraEngine 5.12.x does not resolve template variables (`{material_print_temperature_layer_0}`,
+`{if ...}...{endif}`, etc.) in start/end G-code. This command resolves them using the same
+syntax as CuraEngine's native `GcodeTemplateResolver` (available on CuraEngine `main`, not yet
+released).
+
+```sh
+# Resolve templates in-place using a settings JSON file
+cura-p1s resolve output.gcode --settings cura_settings.json
+
+# Resolve with individual settings
+cura-p1s resolve output.gcode --set material_bed_temperature_layer_0=60 --set material_type=PLA
+
+# Strict mode: error if any unresolved tokens remain
+cura-p1s resolve output.gcode --settings cura_settings.json --strict
+
+# Output to a different file instead of in-place
+cura-p1s resolve output.gcode --settings cura_settings.json -o resolved.gcode
+```
+
+#### With estampo
+
+estampo writes `cura_settings.json` after slicing. Add a command stage to your `estampo.toml`:
+
+```toml
+[pipeline]
+stages = ["load", "arrange", "plate", "slice", "resolve_templates", "pack"]
+
+[resolve_templates]
+command = "cura-p1s resolve {sliced_dir}/plate.gcode --settings {cura_settings}"
+```
+
+When CuraEngine ships a release with native template resolution, remove the
+`resolve_templates` stage — no other changes needed.
+
+### `cura-p1s defs` — list or locate printer definitions
+
+```sh
+# List bundled definition files
+cura-p1s defs
+
+# Print the directory path (for importing into estampo)
+cura-p1s defs --path
+```
+
+## Template syntax
+
+Supports the same syntax as CuraEngine's `GcodeTemplateResolver`:
+
+| Syntax | Example | Description |
+|--------|---------|-------------|
+| `{variable}` | `{material_bed_temperature_layer_0}` | Variable substitution |
+| `{expression}` | `{speed_print * 60}` | Arithmetic (`+`, `-`, `*`, `/`, `%`) |
+| `{if cond}...{endif}` | `{if material_type == "PLA"}...{endif}` | Conditional block |
+| `{if}...{elif}...{else}...{endif}` | | Full conditional chain |
+| Comparisons | `==`, `!=`, `<`, `>`, `<=`, `>=` | In conditions |
+
+## Printer definition files
 
 - `bambox_p1s.def.json` — machine definition (single extruder, 0.4mm nozzle)
 - `bambox_p1s_extruder_0.def.json` — extruder definition
 
-## Usage
-
-Pass the directory containing these files to CuraEngine's `-d` flag:
-
-```sh
-CuraEngine slice \
-  -d /path/to/cura-p1s:/path/to/cura/definitions \
-  -j /path/to/cura-p1s/bambox_p1s.def.json \
-  -s material_type=PLA \
-  -s material_print_temperature_layer_0=220 \
-  -s material_bed_temperature_layer_0=55 \
-  -o output.gcode \
-  -g -e0 -l model.stl
-```
-
-## Template variables
-
-The start/end gcode uses standard CuraEngine template syntax:
-
-- `{material_print_temperature_layer_0}`, `{material_bed_temperature_layer_0}` — temperatures
-- `{material_type}` — filament type (used for PLA fan prevention)
-- `{machine_buildplate_type}` — build plate (used for textured PEI Z offset)
-- `{machine_height}` — Z height for bed drop in end gcode
-- `{speed_print}` — print speed (used for purge line feedrate)
-- `{if condition}`/`{endif}` — conditionals
-
-These require CuraEngine built with `cura-formulae-engine` (not available in CuraEngine 5.12.0; available on CuraEngine main as of April 2026).
-
 ## bambox hint
 
-The start gcode includes two comment lines for [bambox](https://github.com/estampo/bambox) integration:
+The start G-code includes comment lines for [bambox](https://github.com/estampo/bambox):
 
 ```gcode
 ; BAMBOX_PRINTER=p1s
 ; BAMBOX_END
 ```
 
-These allow `bambox pack` to auto-derive the Bambu firmware `printer_model_id` (`C12` for P1S). They are plain gcode comments and have no effect on CuraEngine or the printer.
+These allow `bambox pack` to auto-derive the Bambu firmware `printer_model_id`.
 
 ## License
 
