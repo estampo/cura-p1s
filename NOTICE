@@ -1,0 +1,17 @@
+This project contains material derived from the following AGPL-3.0 licensed projects:
+
+BambuStudio (https://github.com/bambulab/BambuStudio)
+Copyright (c) 2022 Bambu Lab
+License: AGPL-3.0
+
+  The machine_start_gcode and machine_end_gcode sequences in
+  bambox_p1s.def.json are derived from BambuStudio's Bambu Lab P1S
+  printer profile. This includes the nozzle wipe, bed leveling,
+  filament load/unload, and AMS pull-back sequences.
+
+CuraEngine (https://github.com/Ultimaker/CuraEngine)
+Copyright (c) 2024 UltiMaker
+License: AGPL-3.0
+
+  The printer definition JSON schema and template syntax
+  ({variable}, {if}/{endif}) are CuraEngine interfaces.

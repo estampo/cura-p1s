@@ -48,4 +48,4 @@ These allow `bambox pack` to auto-derive the Bambu firmware `printer_model_id` (
 
 ## License
 
-MIT
+AGPL-3.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE) for attribution.
