@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cura-p1s"
-version = "0.1.0"
+version = "0.1.1"
 description = "CuraEngine Bambu Lab P1S printer definition and G-code template resolver"
 readme = "README.md"
 license = "AGPL-3.0-only"

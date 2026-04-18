@@ -70,8 +70,9 @@ Supports the same syntax as CuraEngine's `GcodeTemplateResolver`:
 
 ## Printer definition files
 
-- `bambox_p1s.def.json` — machine definition (single extruder, 0.4mm nozzle)
-- `bambox_p1s_extruder_0.def.json` — extruder definition
+- `bambox_p1s.def.json` — machine definition for a P1S **without AMS** (single extruder, 0.4mm nozzle). AMS-specific start/end G-code (`M620`/`M621` material-switch sequences) is stripped so the printer does not hang waiting for a non-existent AMS unit.
+- `bambox_p1s_ams.def.json` — P1S **with AMS** variant. Inherits from `bambox_p1s` and re-adds the AMS-aware start/end G-code. Select this profile if you print via an AMS / AMS-Lite.
+- `bambox_p1s_extruder_0.def.json` — extruder definition (shared by both variants)
 
 ## bambox hint
 
